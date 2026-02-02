@@ -76,3 +76,18 @@ class World:
                 components.append(entities_components[entity_id])
                 
         return components
+    
+    def query(self, *component_types: type) -> set[uuid.UUID]:
+        if not component_types:
+            return set()
+        
+        if component_types[0] not in self.components_by_type:
+            return set()
+        entities = set(self.components_by_type[component_types[0]].keys())
+
+        for type in component_types[1:]:
+            if type not in self.components_by_type:
+                return set()
+            entities &= self.components_by_type[type].keys()
+
+        return entities
