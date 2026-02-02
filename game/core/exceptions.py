@@ -26,3 +26,13 @@ class ComponentMissing(DarwinDashError):
         self.entity_id = entity_id
         self.component_type = component_type
         self.message = f"Action failed: Entity with UUID {entity_id} is missing required component: {component_type.__name__}"
+        super().__init__(self.message)        
+        
+class SystemNotFound(DarwinDashError):
+    """Raised when an action is attempted on a system that is not registered in the World."""
+    def __init__(self, system_type: type, context: str = "access system"):
+        self.system_type = system_type
+        self.context = context
+        self.message = f"Action failed: System of type '{system_type.__name__}' is not registered in the World (Context: {context})."
+        super().__init__(self.message)        
+        

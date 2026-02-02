@@ -1,6 +1,7 @@
 import uuid
 
-from game.core.exceptions import EntityDoesNotExist, ComponentAlreadyExists, ComponentMissing
+from game.core.exceptions import EntityDoesNotExist, ComponentAlreadyExists, ComponentMissing, SystemNotFound
+from game.io.input_state import InputState
 
 
 class World:
@@ -9,6 +10,7 @@ class World:
         self.seed: int = seed
         self.entities: set[uuid.UUID] = set()
         self.components_by_type: dict[type, dict[uuid.UUID, Any]] = {}
+        self.systems: list[Any] = []
 
         
     def create_entity(self) -> uuid.UUID:
@@ -88,6 +90,19 @@ class World:
         for type in component_types[1:]:
             if type not in self.components_by_type:
                 return set()
-            entities &= self.components_by_type[type].keys()
+            entities &= set(self.components_by_type[type].keys())
 
         return entities
+    
+    def add_system(self, system: Any) -> None:
+        self.systems.append(system)
+        
+    def update(self, dt: float, input_state: InputState = None) -> None:
+        for system in self.systems:
+            system.update(self, dt, input_state)
+            
+    def remove_system(self, system: Any) -> None:
+        if system not in self.systems:
+            raise SystemNotFound(type(system), "remove system")
+        
+        self.systems.remove(system)
