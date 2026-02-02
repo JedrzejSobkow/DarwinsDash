@@ -9,6 +9,7 @@ from game.components.action import Action
 from game.io.input_provider import InputProvider
 from game.systems.input_system import InputSystem
 from game.io.keyboard_input import KeyboardInputProvider
+from game.components.jump_state import JumpState
 
 
 def main():
@@ -23,7 +24,8 @@ def main():
     world.add_component(player, PlayerTag())    
     world.add_component(player, Action())
     world.add_component(player, Position(x = 0, y = 0))    
-    world.add_component(player, Velocity(vx = 0, vy = 0))  
+    world.add_component(player, Velocity(vx = 0, vy = 0)) 
+    world.add_component(player, JumpState(True)) 
     
     input_provider: InputProvider = KeyboardInputProvider()
     
