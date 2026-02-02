@@ -2,6 +2,7 @@ import uuid
 
 from game.core.exceptions import EntityDoesNotExist, ComponentAlreadyExists, ComponentMissing, SystemNotFound
 from game.io.input_state import InputState
+from game.core.system import System
 
 
 class World:
@@ -12,8 +13,8 @@ class World:
         """
         self.seed: int = seed
         self.entities: set[uuid.UUID] = set()
-        self.components_by_type: dict[type, dict[uuid.UUID, Any]] = {}
-        self.systems: list[Any] = []
+        self.components_by_type: dict[type, dict[uuid.UUID, "Component"]] = {}
+        self.systems: list["Component"] = []
 
         
     def create_entity(self) -> uuid.UUID:
@@ -24,7 +25,7 @@ class World:
         self.entities.add(new_entity_id)
         return new_entity_id
     
-    def delete_entity(self, entity_id: uuid.UUID) -> list[Any]:
+    def delete_entity(self, entity_id: uuid.UUID) -> list["Component"]:
         """
         Delete an entity and remove all its components.
         Returns a list of removed components.
@@ -33,7 +34,7 @@ class World:
             raise EntityDoesNotExist(entity_id, "delete entity")
         self.entities.discard(entity_id)
         
-        entity_components: list[Any] = []
+        entity_components: list["Component"] = []
         for components_dict in self.components_by_type.values():
             component = components_dict.pop(entity_id, None)
             if component:
@@ -41,7 +42,7 @@ class World:
                 
         return entity_components
     
-    def add_component(self, entity_id: uuid.UUID, component: Any) -> None:
+    def add_component(self, entity_id: uuid.UUID, component: "Component") -> None:
         """
         Add a component to an entity.
         Raises an exception if the entity does not exist or component already exists.
@@ -60,7 +61,7 @@ class World:
         else:
             self.components_by_type[type(component)][entity_id] = component
             
-    def remove_component(self, entity_id: uuid.UUID, component_type: type) -> Any:
+    def remove_component(self, entity_id: uuid.UUID, component_type: type) -> "Component":
         """
         Remove a component from an entity and return it.
         Raises an exception if the entity or component does not exist.
@@ -76,7 +77,7 @@ class World:
         
         return self.components_by_type[component_type].pop(entity_id)
     
-    def get_component(self, entity_id: uuid.UUID, component_type: type) -> Any:
+    def get_component(self, entity_id: uuid.UUID, component_type: type) -> "Component":
         """
         Retrieve a specific component of an entity.
         Raises an exception if the entity or component does not exist.
@@ -90,7 +91,7 @@ class World:
         
         return self.components_by_type[component_type][entity_id]
     
-    def get_components(self, entity_id: uuid.UUID) -> list[Any]:
+    def get_components(self, entity_id: uuid.UUID) -> list["Component"]:
         """
         Return a list of all components attached to the entity.
         Raises an exception if the entity does not exist.
@@ -98,7 +99,7 @@ class World:
         if entity_id not in self.entities:
             raise EntityDoesNotExist(entity_id, f"get components")
         
-        components: list[Any] = []
+        components: list["Component"] = []
         for entities_components in self.components_by_type.values():
             if entity_id in entities_components:
                 components.append(entities_components[entity_id])
@@ -123,7 +124,7 @@ class World:
 
         return entities
     
-    def add_system(self, system: Any) -> None:
+    def add_system(self, system: System) -> None:
         """
         Register a system to be updated every frame.
         """
@@ -136,7 +137,7 @@ class World:
         for system in self.systems:
             system.update(self, dt, input_state)
             
-    def remove_system(self, system: Any) -> None:
+    def remove_system(self, system: System) -> None:
         """
         Remove a system from the update loop.
         Raises an exception if the system is not registered.
