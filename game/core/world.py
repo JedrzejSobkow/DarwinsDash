@@ -1,5 +1,7 @@
 import uuid
 
+from game.core.exceptions import EntityDoesNotExist, ComponentAlreadyExists, ComponentMissing
+
 
 class World:
     
@@ -15,6 +17,8 @@ class World:
         return new_entity_id
     
     def delete_entity(self, entity_id: uuid.UUID) -> list[Any]:
+        if entity_id not in self.entities:
+            raise EntityDoesNotExist(entity_id, "delete entity")
         self.entities.discard(entity_id)
         
         entity_components: list[Any] = []
@@ -25,3 +29,50 @@ class World:
                 
         return entity_components
     
+    def add_component(self, entity_id: uuid.UUID, component: Any) -> None:
+        if entity_id not in self.entities:
+            raise EntityDoesNotExist(entity_id, f"add component {type(component).__name__}")
+        
+        # TODO Check if such component exists
+        
+        # Component does not exist yet
+        if type(component) not in self.components_by_type:
+            self.components_by_type[type(component)] = {entity_id: component}
+        # Component for the given entity already exists
+        elif entity_id in self.components_by_type[type(component)]:
+            raise ComponentAlreadyExists(entity_id, type(component))
+        else:
+            self.components_by_type[type(component)][entity_id] = component
+            
+    def remove_component(self, entity_id: uuid.UUID, component_type: type) -> Any:
+        if entity_id not in self.entities:
+            raise EntityDoesNotExist(entity_id, f"remove component {component_type.__name__}")
+        
+        # TODO Check if such component exists
+        if (component_type not in self.components_by_type or 
+            entity_id not in self.components_by_type[component_type]):
+             raise ComponentMissing(entity_id, component_type)
+        
+        
+        return self.components_by_type[component_type].pop(entity_id)
+    
+    def get_component(self, entity_id: uuid.UUID, component_type: type) -> Any:
+        if entity_id not in self.entities:
+            raise EntityDoesNotExist(entity_id, f"get component {component_type.__name__}")
+        
+        if (component_type not in self.components_by_type or
+            entity_id not in self.components_by_type[component_type]):
+            raise ComponentMissing(entity_id, component_type)
+        
+        return self.components_by_type[component_type][entity_id]
+    
+    def get_components(self, entity_id: uuid.UUID) -> list[Any]:
+        if entity_id not in self.entities:
+            raise EntityDoesNotExist(entity_id, f"get components")
+        
+        components: list[Any] = []
+        for entities_components in self.components_by_type.values():
+            if entity_id in entities_components:
+                components.append(entities_components[entity_id])
+                
+        return components
