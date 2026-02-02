@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-@dataclass(frozen=True)
-class InputState:
+@dataclass
+class Action:
     move_left: bool = False
     move_right: bool = False
-    jump: bool = False
     crouch: bool = False
+    jump: bool = False
