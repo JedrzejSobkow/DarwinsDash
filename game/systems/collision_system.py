@@ -4,8 +4,6 @@ from game.io.input_state import InputState
 from game.components.jump_state import JumpState
 from game.components.position import Position
 from game.components.velocity import Velocity
-from game.components.action import Action
-from game.core.constants import PLAYER_MOVE_SPEED, PLAYER_CROUCH_SPEED
 
 
 class CollisionSystem(System):
@@ -22,4 +20,5 @@ class CollisionSystem(System):
             if pos.y <= 0:
                 pos.y = 0
                 vel.vy = 0
+                j_state.jumps_left = j_state.max_jumps
                 j_state.on_ground = True

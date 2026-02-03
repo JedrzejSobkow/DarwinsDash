@@ -1,7 +1,6 @@
 from game.core.system import System
 from game.core.world import World
 from game.io.input_state import InputState
-from game.components.player_tag import PlayerTag
 from game.components.position import Position
 from game.components.velocity import Velocity
 from game.components.action import Action
