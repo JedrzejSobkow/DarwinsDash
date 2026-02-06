@@ -19,6 +19,6 @@ class JumpSystem(System):
 
             if action.jump and j_state.jumps_left > 0:
                 j_state.on_ground = False
-                vel.vy += JUMP_INITIAL_SPEED
+                vel.vy = JUMP_INITIAL_SPEED
                 j_state.jumps_left -= 1
             

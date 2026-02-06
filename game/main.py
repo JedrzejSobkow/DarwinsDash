@@ -1,6 +1,6 @@
 import pygame
 from game.core.world import World
-# from game.render.pygame_renderer import Renderer
+from game.render.pygame_renderer import PygameRenderer
 from game.systems.input_system import InputSystem
 from game.systems.jump_system import JumpSystem
 from game.systems.movement_system import MovementSystem
@@ -12,9 +12,18 @@ from game.components.player_tag import PlayerTag
 from game.components.position import Position
 from game.components.velocity import Velocity
 from game.components.action import Action
+from game.components.jump_state import JumpState
+from game.components.renderable import Renderable
+
 from game.io.input_provider import InputProvider
 from game.io.keyboard_input import KeyboardInputProvider
-from game.components.jump_state import JumpState
+
+from game.core.constants import (
+    FLOOR_HEIGHT, 
+    SCREEN_HEIGHT, 
+    SCREEN_WIDTH,
+    PLAYER_COLOR
+)
 
 
 def main():
@@ -41,16 +50,19 @@ def main():
     player = world.create_entity()
     world.add_component(player, PlayerTag())    
     world.add_component(player, Action())
-    world.add_component(player, Position(x = 0, y = 0))    
+    world.add_component(player, Position(x = 0, y = FLOOR_HEIGHT))    
     world.add_component(player, Velocity(vx = 0, vy = 0)) 
     world.add_component(player, JumpState(on_ground = True, jumps_left = 2, max_jumps = 2)) 
+    world.add_component(player, Renderable(width = 20, height = 20, color = PLAYER_COLOR))
     
     input_provider: InputProvider = KeyboardInputProvider()
     
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Darwin's Dash")
     clock = pygame.time.Clock()
+    
+    renderer = PygameRenderer(world, screen)
       
     running = True
     while running:
@@ -68,7 +80,7 @@ def main():
         print(f"Velocity: {vel}")
         print(f"Frame: Player position = ({pos.x}, {pos.y})")
 
-        # renderer.draw()
+        renderer.draw()
 
 if __name__ == "__main__":
     main()
