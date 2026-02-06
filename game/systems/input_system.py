@@ -8,6 +8,7 @@ from game.components.player_tag import PlayerTag
 class InputSystem(System):
             
     def update(self, world: World, dt: float, input_state: InputState = None) -> None:
+        
         entities_with_action = world.query(Action, PlayerTag)
         for entity_id in entities_with_action:
             action = world.get_component(entity_id, Action)

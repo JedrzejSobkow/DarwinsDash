@@ -1,11 +1,12 @@
 import pygame
 from game.core.world import World
 # from game.render.pygame_renderer import Renderer
-from game.systems.movement_system import MovementSystem
 from game.systems.input_system import InputSystem
-from game.systems.collision_system import CollisionSystem
-from game.systems.gravity_system import GravitySystem
 from game.systems.jump_system import JumpSystem
+from game.systems.movement_system import MovementSystem
+from game.systems.gravity_system import GravitySystem
+from game.systems.collision_system import CollisionSystem
+from game.systems.physics_system import PhysicsSystem
 
 from game.components.player_tag import PlayerTag
 from game.components.position import Position
@@ -24,12 +25,14 @@ def main():
     movement_system = MovementSystem()
     gravity_system = GravitySystem()
     collision_system = CollisionSystem()
+    physics_system = PhysicsSystem()
 
     world.add_system(input_system)
     world.add_system(jump_system)
     world.add_system(movement_system)
     world.add_system(collision_system)
     world.add_system(gravity_system)
+    world.add_system(physics_system)
 
 
     

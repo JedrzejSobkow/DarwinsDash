@@ -16,12 +16,9 @@ class JumpSystem(System):
             j_state = world.get_component(entity, JumpState)
             vel = world.get_component(entity, Velocity)
             action = world.get_component(entity, Action)
-            print(action)
-            print(j_state)
-            print(action.jump and j_state.jumps_left > 0)
+
             if action.jump and j_state.jumps_left > 0:
+                j_state.on_ground = False
                 vel.vy += JUMP_INITIAL_SPEED
-                print(vel)
                 j_state.jumps_left -= 1
-                print(j_state)
             

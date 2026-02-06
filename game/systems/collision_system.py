@@ -16,8 +16,7 @@ class CollisionSystem(System):
             vel = world.get_component(entity, Velocity)
             j_state = world.get_component(entity, JumpState)
             
-            j_state.on_ground = False
-            if pos.y <= 0:
+            if pos.y < 0:
                 pos.y = 0
                 vel.vy = 0
                 j_state.jumps_left = j_state.max_jumps
