@@ -14,6 +14,7 @@ from game.components.velocity import Velocity
 from game.components.action import Action
 from game.components.jump_state import JumpState
 from game.components.renderable import Renderable
+from game.components.collider import Collider
 
 from game.io.input_provider import InputProvider
 from game.io.keyboard_input import KeyboardInputProvider
@@ -22,7 +23,10 @@ from game.core.constants import (
     FLOOR_HEIGHT, 
     SCREEN_HEIGHT, 
     SCREEN_WIDTH,
-    PLAYER_COLOR
+    PLAYER_HEIGHT,
+    PLAYER_WIDTH,
+    PLAYER_COLOR,
+    FLOOR_COLOR
 )
 
 
@@ -50,10 +54,22 @@ def main():
     player = world.create_entity()
     world.add_component(player, PlayerTag())    
     world.add_component(player, Action())
-    world.add_component(player, Position(x = 0, y = FLOOR_HEIGHT))    
+    world.add_component(player, Position(x = 0, y = FLOOR_HEIGHT + 100))    
     world.add_component(player, Velocity(vx = 0, vy = 0)) 
-    world.add_component(player, JumpState(on_ground = True, jumps_left = 2, max_jumps = 2)) 
-    world.add_component(player, Renderable(width = 20, height = 20, color = PLAYER_COLOR))
+    world.add_component(player, JumpState(on_ground = False, jumps_left = 2, max_jumps = 2)) 
+    world.add_component(player, Renderable(width = PLAYER_WIDTH, height = PLAYER_HEIGHT, color = PLAYER_COLOR))
+    world.add_component(player, Collider(width = PLAYER_WIDTH, height = PLAYER_HEIGHT))
+    
+    floor = world.create_entity()
+    world.add_component(floor, Position(0, 0))
+    world.add_component(floor, Renderable(width = SCREEN_WIDTH, height = FLOOR_HEIGHT, color = FLOOR_COLOR))
+    world.add_component(floor, Collider(width = SCREEN_WIDTH, height = FLOOR_HEIGHT))
+    
+    object = world.create_entity()
+    world.add_component(object, Position(70, 100))
+    world.add_component(object, Renderable(width = 100, height = 100, color = FLOOR_COLOR))
+    world.add_component(object, Collider(width = 100, height = 100))
+    
     
     input_provider: InputProvider = KeyboardInputProvider()
     

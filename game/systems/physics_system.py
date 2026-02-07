@@ -15,5 +15,8 @@ class PhysicsSystem(System):
             vel = world.get_component(entity, Velocity)
             pos = world.get_component(entity, Position)
             
+            pos.last_x = pos.x
+            pos.last_y = pos.y
+            
             pos.x += dt * vel.vx
             pos.y += dt * vel.vy

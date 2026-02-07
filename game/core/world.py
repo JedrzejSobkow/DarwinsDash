@@ -77,6 +77,20 @@ class World:
         
         return self.components_by_type[component_type].pop(entity_id)
     
+    def has_component(self, entity_id: uuid.UUID, component_type: type) -> bool:
+        """
+        Return True/False depending on whether the entity has the given component or not.
+        Raises an exception if the entity does not exist.
+        """
+        if entity_id not in self.entities:
+            raise EntityDoesNotExist(entity_id, f"has component")
+        
+        if (component_type not in self.components_by_type or
+            entity_id not in self.components_by_type[component_type]):
+            return False
+        
+        return True
+    
     def get_component(self, entity_id: uuid.UUID, component_type: type) -> "Component":
         """
         Retrieve a specific component of an entity.
