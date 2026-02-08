@@ -37,19 +37,15 @@ def main():
     jump_system = JumpSystem()
     movement_system = MovementSystem()
     gravity_system = GravitySystem()
-    collision_system = CollisionSystem()
     physics_system = PhysicsSystem()
+    collision_system = CollisionSystem()
 
     world.add_system(input_system)
     world.add_system(jump_system)
     world.add_system(movement_system)
-    world.add_system(collision_system)
     world.add_system(gravity_system)
     world.add_system(physics_system)
-
-
-    
-    # renderer = Renderer(world)
+    world.add_system(collision_system)
 
     player = world.create_entity()
     world.add_component(player, PlayerTag())    
@@ -91,11 +87,6 @@ def main():
         input_state = input_provider.get_input_state()
         world.update(dt, input_state)
         
-        pos = world.get_component(player, Position)
-        vel = world.get_component(player, Velocity)
-        print(f"Velocity: {vel}")
-        print(f"Frame: Player position = ({pos.x}, {pos.y})")
-
         renderer.draw()
 
 if __name__ == "__main__":

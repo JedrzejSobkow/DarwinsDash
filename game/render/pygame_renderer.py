@@ -1,8 +1,10 @@
 import pygame
 from game.render.renderer import Renderer
+from game.render.debug_hud import DebugHUD
 
 from game.components.renderable import Renderable
 from game.components.position import Position
+from game.components.player_tag import PlayerTag
 
 from game.core.world import World
 from game.core.constants import (
@@ -18,12 +20,13 @@ class PygameRenderer(Renderer):
     def __init__(self, world: World, screen: pygame.Surface) -> None:
         super().__init__(world)
         self.screen: pygame.Surface = screen
+        self.debug_hud = DebugHUD()
+
         
     def draw(self):
         # Background
         self.screen.fill(BACKGROUND_COLOR)
         
-        rect = pygame.Rect(0, 0, 0, 0)
         # Floor
         pygame.draw.rect(
             surface = self.screen,
@@ -45,5 +48,12 @@ class PygameRenderer(Renderer):
                 
                 rect = pygame.Rect(screen_x, screen_y, render.width, render.height)
             )
+            
+        # Draw stats
+        self.debug_hud.draw(
+            screen=self.screen,
+            world=self.world,
+            player_entity=self.world.query(PlayerTag).pop()
+        )
         
         pygame.display.flip()
